@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Full Prompt Builder</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #0f0f0f;
+      color: #fff;
+      padding: 2rem;
+    }
+    h1 {
+      color: #f05;
+    }
+    .tabs {
+      margin-bottom: 2rem;
+    }
+    .tab-btn {
+      background: #222;
+      color: #fff;
+      border: 1px solid #444;
+      padding: 0.5rem 2rem;
+      border-radius: 4px 4px 0 0;
+      margin-right: 0.5rem;
+      font-size: 1.1rem;
+      cursor: pointer;
+      outline: none;
+    }
+    .tab-btn.active {
+      background: #f05;
+      color: #fff;
+      border-bottom: 2px solid #0f0f0f;
+      font-weight: bold;
+    }
+    .section {
+      margin-top: 1.2rem;
+      margin-bottom: 2rem;
+      display: none;
+    }
+    .section.active { display: block; }
+    .template-sentence {
+      background: #1a1a1a;
+      padding: 1rem;
+      border-left: 4px solid #f05;
+      line-height: 2;
+      margin-bottom: 1.5rem;
+    }
+    input[list], select {
+      background: #222;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 4px;
+      padding: 0.25rem;
+      margin-left: 0.25rem;
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 1rem;
+      margin-right: 1rem;
+      padding: 0.75rem 1.5rem;
+      background: #f05;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #output {
+      margin-top: 2rem;
+      white-space: pre-wrap;
+      background: #1a1a1a;
+      padding: 1rem;
+      border-left: 4px solid #f05;
+    }
+  </style>
+</head>
+<body>
+  <h1>Advanced Visual Prompt Builder</h1>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('character')">Character</button>
+    <button class="tab-btn" onclick="switchTab('space')">3D Space</button>
+    <button class="tab-btn" onclick="switchTab('product')">Product</button>
+  </div>
+
+  <!-- CHARACTER DESCRIPTION -->
+  <div class="section active" id="section-character">
+    <strong>CHARACTER DESCRIPTION</strong>
+    <div class="template-sentence">
+      A <input list="ages" id="age"> <input list="genders" id="gender"> from <input list="origins" id="origin">, with <input list="skins" id="skin"> skin, <input list="faces" id="face"> face, <input list="eyes" id="eyes"> eyes, <input list="hairStyles" id="hairStyle"> hair in <input list="hairColors" id="hairColor">, <input list="features" id="features">, and a <input list="bodies" id="body"> body. Wearing <input list="clothesList" id="clothes">, <input list="fabrics" id="fabric">, <input list="accessoriesList" id="accessories">, <input list="footwearList" id="footwear">, in a <input list="poses" id="pose"> pose facing <input list="facings" id="facing">.
+      <br>
+      In a <input list="envTypes" id="envType"> with <input list="envDetailsList" id="envDetails">, under <input list="lights" id="light">, surrounded by <input list="envObjectsList" id="envObjects">.
+      <br>
+      Shot with a <input list="cameraTypes" id="cameraType"> and <input list="lensTypes" id="lensType"> (<input id="focal" placeholder="focal length">mm, f/<input id="aperture" placeholder="aperture">, ISO <input id="iso" placeholder="ISO">, 1/<input id="shutter" placeholder="shutter speed">s), from a <input list="angles" id="angle">, with <input list="dofStyles" id="dof">, using <input list="lightingStyles" id="lightingStyle">.
+      <br>
+      Rendered in <input list="renderStyles" id="renderStyle"> using <input list="engines" id="engine">, color graded in <input list="colorStyles" id="colorStyle">, enhanced with <input list="postfxList" id="postfx">.
+      <br>
+      Scene evokes a <input list="moods" id="mood"> mood, framed with <input list="compositions" id="composition">.
+    </div>
+    <button type="button" onclick="randomizeFields('character')">Random</button>
+    <button onclick="generatePrompt('character')">Generate Prompt</button>
+  </div>
+
+  <!-- 3D SPACE DESCRIPTION -->
+  <div class="section" id="section-space">
+    <strong>3D SPACE DESCRIPTION</strong>
+    <div class="template-sentence">
+      A <input list="spaceTypes" id="spaceType"> in <input list="envTypes" id="spaceEnv">, details: <input list="envDetailsList" id="spaceDetails">, lighting: <input list="lights" id="spaceLight">, surrounded by <input list="envObjectsList" id="spaceObjects">.<br>
+      Camera: <input list="cameraTypes" id="spaceCamera"> with <input list="lensTypes" id="spaceLens">, angle: <input list="angles" id="spaceAngle">, lighting: <input list="lightingStyles" id="spaceLighting">, DOF: <input list="dofStyles" id="spaceDof">.<br>
+      Rendered in <input list="renderStyles" id="spaceRenderStyle"> using <input list="engines" id="spaceEngine">.<br>
+      Style: <input list="colorStyles" id="spaceColorStyle">, FX: <input list="postfxList" id="spacePostfx">.<br>
+      Mood: <input list="moods" id="spaceMood">, Composition: <input list="compositions" id="spaceComposition">.
+    </div>
+    <button type="button" onclick="randomizeFields('space')">Random</button>
+    <button onclick="generatePrompt('space')">Generate Prompt</button>
+  </div>
+
+  <!-- PRODUCT DESCRIPTION -->
+  <div class="section" id="section-product">
+    <strong>PRODUCT DESCRIPTION</strong>
+    <div class="template-sentence">
+      A <input list="productTypes" id="productType"> made of <input list="fabrics" id="productMaterial">, color <input list="colorStyles" id="productColor">.<br>
+      Product features: <input list="productFeatures" id="productFeatures">, style: <input list="renderStyles" id="productStyle">.<br>
+      Displayed on <input list="productBackgrounds" id="productBg">, with <input list="lights" id="productLight"> lighting, angle: <input list="angles" id="productAngle">.<br>
+      Camera: <input list="cameraTypes" id="productCamera">, lens: <input list="lensTypes" id="productLens">, FX: <input list="postfxList" id="productPostfx">.<br>
+      Mood: <input list="moods" id="productMood">, Composition: <input list="compositions" id="productComposition">.
+    </div>
+    <button type="button" onclick="randomizeFields('product')">Random</button>
+    <button onclick="generatePrompt('product')">Generate Prompt</button>
+  </div>
+
+  <div id="output"></div>
+
+  <!-- DATALISTS FOR AUTOCOMPLETE (EXPANDED) -->
+  <datalist id="spaceTypes">
+    <option>industrial interior</option><option>archviz lobby</option><option>warehouse</option><option>cyberpunk street</option>
+    <option>museum hall</option><option>mansion hall</option><option>Japanese teahouse</option><option>futuristic data center</option>
+    <option>zen courtyard</option>
+  </datalist>
+  <datalist id="productTypes">
+    <option>smartphone</option><option>headphones</option><option>running shoe</option><option>laptop</option><option>backpack</option>
+    <option>luxury wristwatch</option><option>gaming console</option><option>drone</option><option>designer chair</option><option>desk lamp</option>
+    <option>water bottle</option>
+  </datalist>
+  <datalist id="productFeatures">
+    <option>waterproof</option><option>ergonomic grip</option><option>wireless charging</option><option>foldable</option>
+    <option>scratch resistant</option><option>breathable mesh</option><option>noise-cancelling</option><option>shock absorbent</option>
+    <option>UV-protection</option><option>carbon fiber body</option>
+  </datalist>
+  <datalist id="productBackgrounds">
+    <option>seamless white</option><option>studio black</option><option>textured stone</option><option>wooden table</option>
+    <option>floating in mid-air</option><option>gradient backdrop</option><option>lifestyle scene</option><option>mirror base</option>
+  </datalist>
+  <datalist id="ages">
+    <option>infant</option><option>toddler</option><option>child</option><option>pre-teen</option><option>teenager</option>
+    <option>young adult</option><option>twenties</option><option>thirties</option><option>forties</option><option>fifties</option>
+    <option>sixties</option><option>senior</option><option>elderly</option><option>ancient</option><option>youthful</option>
+    <option>middle-aged</option><option>baby-faced</option><option>mature</option><option>ageless</option><option>adolescent</option>
+    <option>childlike</option><option>grown-up</option><option>venerable</option><option>immortal</option><option>centenarian</option>
+    <option>octogenarian</option><option>teen</option><option>senescent</option><option>prime of life</option><option>sprightly</option>
+    <option>juvenile</option><option>pubescent</option><option>prepubescent</option><option>late 20s</option><option>early 30s</option>
+    <option>mid-40s</option><option>early 60s</option><option>grandparent age</option><option>timeless</option>
+  </datalist>
+  <datalist id="genders">
+    <option>male</option><option>female</option><option>non-binary</option><option>androgynous</option><option>masculine-presenting</option>
+    <option>feminine-presenting</option><option>genderqueer</option><option>transgender</option><option>cisgender</option><option>intersex</option>
+    <option>genderfluid</option><option>agender</option><option>bigender</option><option>demiboy</option><option>demigirl</option>
+    <option>third gender</option><option>androgyne</option><option>neutrois</option><option>pangender</option><option>transmasc</option>
+    <option>transfemme</option><option>butch</option><option>femme</option><option>epicene</option><option>two-spirit</option>
+    <option>questioning</option><option>fluid</option><option>non-conforming</option><option>unlabeled</option><option>multigender</option>
+    <option>soft masculine</option><option>soft feminine</option>
+  </datalist>
+  <datalist id="origins">
+    <option>Northern Europe</option><option>Western Europe</option><option>Eastern Europe</option><option>Southern Europe</option><option>Scandinavia</option>
+    <option>East Asia</option><option>Southeast Asia</option><option>South Asia</option><option>Middle East</option><option>Africa</option>
+    <option>North Africa</option><option>West Africa</option><option>East Africa</option><option>Central America</option><option>South America</option>
+    <option>Central Asia</option><option>Australia</option><option>Polynesia</option><option>Caribbean</option><option>Native American</option>
+    <option>Pacific Islander</option><option>Fantasy Kingdom</option><option>Post-Apocalyptic City</option><option>Space Colony</option><option>Ancient Civilization</option>
+    <option>Alien World</option><option>Steampunk Metropolis</option><option>Cyberpunk Sprawl</option><option>Medieval Village</option><option>Victorian London</option>
+    <option>Gothic Castle</option><option>Futuristic Utopia</option><option>Alternate Reality</option><option>Lost City</option><option>Transylvania</option>
+    <option>Amazonian</option><option>Atlantis</option><option>Martian Settlement</option><option>Neo-Tokyo</option>
+  </datalist>
+  <datalist id="skins">
+    <option>pale</option><option>fair</option><option>ivory</option><option>porcelain</option><option>olive</option>
+    <option>medium</option><option>tan</option><option>brown</option><option>golden</option><option>bronzed</option>
+    <option>caramel</option><option>amber</option><option>copper</option><option>deep brown</option><option>dark</option>
+    <option>ebony</option><option>alabaster</option><option>freckled</option><option>ruddy</option><option>ashen</option>
+    <option>rosy</option><option>bluish</option><option>green-tinged</option><option>tattooed</option><option>translucent</option>
+    <option>weathered</option><option>smooth</option><option>scaly</option><option>cybernetic</option><option>mutated</option>
+    <option>crimson</option><option>violet</option><option>peach</option><option>sun-kissed</option><option>luminous</option>
+    <option>glowing</option>
+  </datalist>
+  <datalist id="faces">
+    <option>round</option><option>square</option><option>oval</option><option>heart-shaped</option><option>elongated</option>
+    <option>triangular</option><option>rectangular</option><option>diamond-shaped</option><option>angular</option><option>strong jawline</option>
+    <option>soft features</option><option>chiseled</option><option>baby-faced</option><option>sunken cheeks</option><option>high cheekbones</option>
+    <option>pronounced brow</option><option>flat nose</option><option>sharp nose</option><option>broad nose</option><option>thin lips</option>
+    <option>full lips</option><option>pursed lips</option><option>pointed chin</option><option>double chin</option><option>bearded</option>
+    <option>clean-shaven</option><option>wrinkled</option><option>scarred</option><option>pierced</option><option>cybernetic implants</option>
+    <option>burnished</option><option>gaunt</option>
+  </datalist>
+  <datalist id="eyes">
+    <option>blue</option><option>green</option><option>amber</option><option>hazel</option><option>brown</option>
+    <option>black</option><option>grey</option><option>violet</option><option>golden</option><option>silver</option>
+    <option>red</option><option>heterochromia</option><option>one-eyed</option><option>monolid</option><option>almond-shaped</option>
+    <option>round</option><option>upturned</option><option>downturned</option><option>wide-set</option><option>close-set</option>
+    <option>glowing</option><option>catlike</option><option>reptilian</option><option>cybernetic</option><option>glassy</option>
+    <option>milky</option><option>blind</option><option>wrinkled</option><option>sparkling</option><option>sharp gaze</option>
+    <option>sleepy</option><option>piercing</option><option>sunken</option>
+  </datalist>
+  <datalist id="hairStyles">
+    <option>short</option><option>long</option><option>wavy</option><option>curly</option><option>straight</option>
+    <option>spiky</option><option>braided</option><option>afro</option><option>mohawk</option><option>crew cut</option>
+    <option>undercut</option><option>buzz cut</option><option>tied back</option><option>pigtails</option><option>bob cut</option>
+    <option>layered</option><option>feathered</option><option>shaved</option><option>top knot</option><option>messy</option>
+    <option>slicked back</option><option>pompadour</option><option>side part</option><option>dreadlocks</option><option>faux hawk</option>
+    <option>fringe</option><option>asymmetrical</option><option>pageboy</option><option>quiff</option><option>cornrows</option>
+    <option>pixie cut</option><option>bun</option>
+  </datalist>
+  <datalist id="hairColors">
+    <option>black</option><option>silver</option><option>white</option><option>grey</option><option>platinum</option>
+    <option>ash blonde</option><option>golden blonde</option><option>strawberry blonde</option><option>dirty blonde</option><option>honey blonde</option>
+    <option>brown</option><option>dark brown</option><option>auburn</option><option>red</option><option>ginger</option>
+    <option>chestnut</option><option>mahogany</option><option>dyed</option><option>pastel pink</option><option>blue</option>
+    <option>teal</option><option>emerald green</option><option>neon green</option><option>purple</option><option>lavender</option>
+    <option>magenta</option><option>multicolor</option><option>ombre</option><option>frosted tips</option><option>balayage</option>
+    <option>silver-blue</option><option>copper</option>
+  </datalist>
+  <datalist id="features">
+    <option>scarred</option><option>tattooed</option><option>pierced</option><option>freckled</option><option>smooth</option>
+    <option>wrinkled</option><option>dimples</option><option>mole</option><option>beauty mark</option><option>cleft chin</option>
+    <option>rosy cheeks</option><option>high cheekbones</option><option>pointed ears</option><option>elf ears</option><option>gills</option>
+    <option>fangs</option><option>horns</option><option>cybernetic implants</option><option>glowing tattoos</option><option>metallic skin</option>
+    <option>birthmark</option><option>prosthetic limb</option><option>missing eye</option><option>cyborg eye</option><option>webbed fingers</option>
+    <option>scales</option><option>extra fingers</option><option>translucent skin</option><option>robotic jaw</option><option>prosthetic arm</option>
+    <option>veiny</option><option>burn scars</option>
+  </datalist>
+  <datalist id="bodies">
+    <option>slender</option><option>athletic</option><option>muscular</option><option>fragile</option><option>curvy</option>
+    <option>stocky</option><option>petite</option><option>broad-shouldered</option><option>tall</option><option>short</option>
+    <option>giant</option><option>dwarf</option><option>lean</option><option>bulky</option><option>lithe</option>
+    <option>willowy</option><option>barrel-chested</option><option>thickset</option><option>hourglass</option><option>pear-shaped</option>
+    <option>apple-shaped</option><option>rectangular</option><option>robotic</option><option>mechanical</option><option>armored</option>
+    <option>skeletal</option><option>amputee</option><option>androgynous</option><option>proportional</option><option>asymmetrical</option>
+    <option>flexible</option>
+  </datalist>
+  <datalist id="clothesList">
+    <option>cloak</option><option>robe</option><option>tactical armor</option><option>ceremonial gown</option><option>leather jacket</option>
+    <option>tunic</option><option>kimono</option><option>suit</option><option>hoodie</option><option>trench coat</option>
+    <option>uniform</option><option>spacesuit</option><option>business attire</option><option>evening dress</option><option>battle gear</option>
+    <option>swimsuit</option><option>overalls</option><option>armor plating</option><option>power suit</option><option>vest</option>
+    <option>jumpsuit</option><option>corset</option><option>cape</option><option>rags</option><option>bodysuit</option>
+    <option>jeans</option><option>cardigan</option><option>shawl</option><option>shirtless</option><option>tank top</option>
+    <option>gown</option><option>poncho</option>
+  </datalist>
+  <datalist id="fabrics">
+    <option>silk</option><option>wool</option><option>cotton</option><option>leather</option><option>metal</option>
+    <option>denim</option><option>velvet</option><option>lace</option><option>tweed</option><option>linen</option>
+    <option>nylon</option><option>spandex</option><option>polyester</option><option>fleece</option><option>cashmere</option>
+    <option>suede</option><option>latex</option><option>mesh</option><option>canvas</option><option>gore-tex</option>
+    <option>kevlar</option><option>plastic</option><option>rubber</option><option>sequins</option><option>embroidery</option>
+    <option>organic fibers</option><option>synthetic</option><option>chainmail</option><option>plush</option><option>jacquard</option>
+    <option>satin</option><option>chiffon</option>
+  </datalist>
+  <datalist id="accessoriesList">
+    <option>ring</option><option>amulet</option><option>necklace</option><option>satchel</option><option>helmet</option>
+    <option>bracelet</option><option>earrings</option><option>belt</option><option>scarf</option><option>goggles</option>
+    <option>visor</option><option>backpack</option><option>mask</option><option>armband</option><option>gauntlets</option>
+    <option>gloves</option><option>brooch</option><option>pendant</option><option>watch</option><option>cufflinks</option>
+    <option>monocle</option><option>utility belt</option><option>holster</option><option>pauldron</option><option>cybernetic implant</option>
+    <option>keychain</option><option>hairpin</option><option>tiara</option><option>crown</option><option>pocket watch</option>
+    <option>shoulder pads</option><option>hairband</option>
+  </datalist>
+  <datalist id="footwearList">
+    <option>boots</option><option>sandals</option><option>greaves</option><option>barefoot</option>
+    <option>sneakers</option><option>combat boots</option><option>dress shoes</option><option>platforms</option>
+    <option>flip-flops</option><option>stilettos</option><option>loafers</option><option>ankle boots</option>
+    <option>slippers</option><option>knee-high boots</option><option>steel-toe boots</option><option>wooden clogs</option>
+    <option>heels</option><option>waders</option><option>galoshes</option><option>sockless</option><option>moccasins</option>
+    <option>pointed shoes</option><option>mary janes</option><option>oxfords</option><option>bare feet</option>
+    <option>strapped sandals</option><option>thigh-high boots</option><option>roller skates</option><option>slip-ons</option><option>canvas shoes</option><option>rain boots</option>
+  </datalist>
+  <datalist id="poses">
+    <option>standing</option><option>kneeling</option><option>walking</option><option>crouched</option><option>resting</option>
+    <option>sitting</option><option>jumping</option><option>running</option><option>leaning</option><option>lying down</option>
+    <option>reaching</option><option>folded arms</option><option>saluting</option><option>dancing</option><option>cross-legged</option>
+    <option>stretching</option><option>hunched</option><option>charging</option><option>mid-air</option><option>floating</option>
+    <option>arms akimbo</option><option>pensive</option><option>gesturing</option><option>hero pose</option><option>hands on hips</option>
+    <option>back turned</option><option>aggressive stance</option><option>defensive stance</option><option>hands clasped</option><option>collapsed</option>
+    <option>meditative</option>
+  </datalist>
+  <datalist id="facings">
+    <option>toward camera</option><option>looking away</option><option>profile view</option><option>skyward</option>
+    <option>downcast</option><option>three-quarter view</option><option>over shoulder</option><option>looking left</option>
+    <option>looking right</option><option>looking up</option><option>back to camera</option><option>close-up</option>
+    <option>facing forward</option><option>facing audience</option><option>staring</option><option>gazing off</option>
+    <option>side glance</option><option>oblique angle</option><option>full frontal</option><option>turned away</option>
+    <option>rear view</option><option>diagonal</option><option>upwards</option><option>downwards</option>
+    <option>with a smirk</option><option>with a glare</option><option>neutral face</option><option>eyes closed</option>
+  </datalist>
+  <datalist id="envTypes">
+    <option>foggy forest</option><option>desert ruins</option><option>urban alley</option><option>cyberpunk city</option><option>enchanted glade</option>
+    <option>rain-soaked street</option><option>mountaintop</option><option>tropical jungle</option><option>arctic tundra</option><option>futuristic city</option>
+    <option>medieval town</option><option>abandoned factory</option><option>space station</option><option>deep cave</option><option>sunlit meadow</option>
+    <option>rocky canyon</option><option>ancient temple</option><option>flooded subway</option><option>stormy coastline</option><option>gothic cathedral</option>
+    <option>snowfield</option><option>volcanic wasteland</option><option>floating island</option><option>overgrown ruins</option><option>shadowy crypt</option>
+    <option>high-tech lab</option><option>underground bunker</option><option>crystal cave</option><option>moonlit rooftop</option><option>windy desert</option>
+    <option>bioluminescent swamp</option>
+  </datalist>
+  <datalist id="envDetailsList">
+    <option>mossy stones</option><option>floating lanterns</option><option>rain puddles</option><option>neon signs</option><option>twinkling lights</option>
+    <option>drifting fog</option><option>broken glass</option><option>ancient statues</option><option>glowing runes</option><option>rusted machinery</option>
+    <option>ivy-covered walls</option><option>graffiti</option><option>soaring arches</option><option>puddles</option><option>creeping vines</option>
+    <option>waterfalls</option><option>scattered debris</option><option>overgrown foliage</option><option>glowing fungi</option><option>cobwebs</option>
+    <option>fireflies</option><option>strewn coins</option><option>dripping water</option><option>flickering torches</option><option>hovering drones</option>
+    <option>pale mist</option><option>shattered columns</option><option>moonbeams</option><option>billowing dust</option><option>flying banners</option>
+  </datalist>
+  <datalist id="lights">
+    <option>moonlight</option><option>golden hour</option><option>neon glow</option><option>torchlight</option><option>twilight mist</option>
+    <option>backlit</option><option>rim light</option><option>harsh spotlight</option><option>ambient glow</option><option>soft daylight</option>
+    <option>candlelight</option><option>flickering flame</option><option>starlight</option><option>overcast daylight</option><option>flashlight</option>
+    <option>diffused light</option><option>blue hour</option><option>firelight</option><option>studio softbox</option><option>colored gels</option>
+    <option>side light</option><option>window light</option><option>streetlight</option><option>UV light</option><option>infrared</option>
+    <option>luminescent</option><option>laser beams</option><option>bioluminescent</option><option>overhead</option><option>spotty sunlight</option>
+    <option>stage lighting</option>
+  </datalist>
+  <datalist id="envObjectsList">
+    <option>fog</option><option>statues</option><option>ghostly shadows</option><option>fireflies</option><option>ancient ruins</option>
+    <option>floating leaves</option><option>abandoned cars</option><option>moss</option><option>fallen branches</option><option>shattered glass</option>
+    <option>flaming torches</option><option>neon lights</option><option>scattered coins</option><option>junk piles</option><option>floating debris</option>
+    <option>old furniture</option><option>street signs</option><option>hanging vines</option><option>crows</option><option>glowing crystals</option>
+    <option>market stalls</option><option>cats</option><option>misty air</option><option>moving shadows</option><option>ancient trees</option>
+    <option>drifting smoke</option><option>mystical orbs</option><option>tiny robots</option><option>steaming vents</option><option>overgrown roots</option>
+  </datalist>
+  <datalist id="cameraTypes">
+    <option>DSLR</option><option>mirrorless</option><option>35mm film</option><option>drone</option><option>cinema rig</option>
+    <option>medium format</option><option>large format</option><option>GoPro</option><option>point-and-shoot</option><option>rangefinder</option>
+    <option>4K cinema camera</option><option>IMAX</option><option>super 8</option><option>ARRI Alexa</option><option>Blackmagic Pocket</option>
+    <option>Panavision</option><option>old Polaroid</option><option>360-degree camera</option><option>thermal camera</option><option>night vision</option>
+    <option>security cam</option><option>Raspberry Pi Cam</option><option>bodycam</option><option>camcorder</option><option>vintage camera</option>
+    <option>webcam</option><option>VR headset camera</option><option>stereo camera</option><option>depth sensor</option><option>photogrammetry rig</option>
+  </datalist>
+  <datalist id="lensTypes">
+    <option>50mm prime</option><option>85mm portrait</option><option>18mm wide-angle</option><option>telephoto</option><option>tilt-shift</option>
+    <option>macro</option><option>fisheye</option><option>zoom lens</option><option>135mm prime</option><option>35mm prime</option>
+    <option>super-telephoto</option><option>200mm</option><option>14mm ultra-wide</option><option>24-70mm</option><option>70-200mm</option>
+    <option>cinema anamorphic</option><option>portrait lens</option><option>ultra-wide angle</option><option>macro bellows</option><option>infrared lens</option>
+    <option>mirror lens</option><option>vintage glass</option><option>soft focus lens</option><option>lensbaby</option><option>projector lens</option>
+    <option>petzval lens</option><option>dual lens</option><option>apochromatic lens</option><option>art lens</option><option>wide angle pancake</option>
+  </datalist>
+  <datalist id="angles">
+    <option>low angle</option><option>high angle</option><option>eye level</option><option>bird's-eye view</option><option>worm's-eye view</option>
+    <option>Dutch angle</option><option>overhead shot</option><option>underslung</option><option>shoulder level</option><option>tilted up</option>
+    <option>tilted down</option><option>side angle</option><option>profile angle</option><option>rear angle</option><option>frontal</option>
+    <option>diagonal</option><option>close-up</option><option>extreme close-up</option><option>medium shot</option><option>wide shot</option>
+    <option>point of view</option><option>over-the-shoulder</option><option>reverse angle</option><option>three-quarters</option><option>macro perspective</option>
+    <option>split diopter</option><option>mirrored angle</option><option>panoramic</option><option>canted angle</option><option>tiny planet</option>
+  </datalist>
+  <datalist id="dofStyles">
+    <option>shallow</option><option>deep</option><option>tilt-shift blur</option><option>soft focus background</option>
+    <option>infinite focus</option><option>bokeh-rich</option><option>creamy bokeh</option><option>swirly bokeh</option><option>selective focus</option>
+    <option>double focus</option><option>macro depth</option><option>sharp foreground</option><option>blurred foreground</option><option>cinematic blur</option>
+    <option>split focus</option><option>defocused</option><option>sharp to blur gradient</option><option>edge-to-edge sharp</option><option>dreamy blur</option>
+    <option>diffraction blur</option><option>vintage bokeh</option><option>field curvature</option><option>plane of focus</option><option>focus stacking</option>
+    <option>pinpoint DOF</option><option>motion blur</option><option>hyperfocal</option><option>zone focus</option><option>rack focus effect</option>
+  </datalist>
+  <datalist id="lightingStyles">
+    <option>volumetric light</option><option>rim light</option><option>backlight</option><option>spotlight</option><option>ambient occlusion</option>
+    <option>studio three-point</option><option>softbox fill</option><option>hard shadow</option><option>bounce lighting</option><option>light painting</option>
+    <option>God rays</option><option>color gels</option><option>LED strips</option><option>practical lighting</option><option>motivated light</option>
+    <option>sunbeams</option><option>glowsticks</option><option>split lighting</option><option>Rembrandt lighting</option><option>chiaroscuro</option>
+    <option>uplighting</option><option>downlighting</option><option>haze-enhanced</option><option>neon edge</option><option>moonlit</option>
+    <option>hard key light</option><option>shadow play</option><option>silhouette light</option><option>kicker light</option><option>hair light</option>
+  </datalist>
+  <datalist id="renderStyles">
+    <option>3D cinematic</option><option>gouache painting</option><option>watercolor storybook</option><option>anime style</option><option>digital painting</option>
+    <option>oil painting</option><option>comic book ink</option><option>cell shading</option><option>clay render</option><option>photorealistic</option>
+    <option>isometric pixel art</option><option>manga</option><option>hyperreal</option><option>low-poly 3D</option><option>voxel art</option>
+    <option>cutout paper</option><option>woodcut</option><option>line art</option><option>etching</option><option>stained glass</option>
+    <option>neon glow art</option><option>retro pixel art</option><option>polaroid look</option><option>cyberpunk synthwave</option><option>sketchbook</option>
+    <option>pastel drawing</option><option>film noir</option><option>noir shadow</option><option>fashion illustration</option><option>airbrush art</option>
+  </datalist>
+  <datalist id="engines">
+    <option>Octane Render</option><option>Unreal Engine</option><option>Cycles</option><option>Blender Eevee</option>
+    <option>Redshift</option><option>Arnold</option><option>Corona Renderer</option><option>Unity HDRP</option><option>V-Ray</option>
+    <option>Mental Ray</option><option>LuxCore</option><option>Keyshot</option><option>Marmoset Toolbag</option><option>RenderMan</option>
+    <option>Fstorm</option><option>Maxwell Render</option><option>Indigo Renderer</option><option>Eevee</option><option>iray</option>
+    <option>Enscape</option><option>DAZ 3Delight</option><option>Cycles X</option><option>Pencil+</option><option>Cinema 4D Standard</option>
+    <option>Modo</option><option>Terragen</option><option>Phoenix FD</option><option>Clarisse iFX</option><option>Bforartists</option>
+  </datalist>
+  <datalist id="colorStyles">
+    <option>pastel tones</option><option>moody noir</option><option>warm analog</option><option>desaturated</option><option>neon duotone</option>
+    <option>cool monochrome</option><option>high contrast</option><option>split toning</option><option>cross-processed</option><option>color splash</option>
+    <option>bleach bypass</option><option>matte finish</option><option>high key</option><option>low key</option><option>cinematic teal-orange</option>
+    <option>film emulation</option><option>retro Kodachrome</option><option>black and white</option><option>sepia</option><option>technicolor</option>
+    <option>vivid colors</option><option>subdued palette</option><option>infrared</option><option>tungsten blue</option><option>amber highlight</option>
+    <option>gradient map</option><option>glitch palette</option><option>high saturation</option><option>superflat</option><option>acidic tones</option>
+  </datalist>
+  <datalist id="postfxList">
+    <option>film grain</option><option>bloom</option><option>halation</option><option>vignette</option><option>chromatic aberration</option>
+    <option>motion blur</option><option>lens flare</option><option>god rays</option><option>depth haze</option><option>glow</option>
+    <option>noise</option><option>light leaks</option><option>scratches</option><option>color fringe</option><option>scanlines</option>
+    <option>CRT effect</option><option>glitch distortion</option><option>posterization</option><option>edge enhancement</option><option>iris blur</option>
+    <option>fisheye warp</option><option>starburst filter</option><option>double exposure</option><option>tilt-shift miniature</option><option>lens distortion</option>
+    <option>sharpen</option><option>fog overlay</option><option>color inversion</option><option>poster edges</option><option>dust specks</option>
+  </datalist>
+  <datalist id="moods">
+    <option>mysterious</option><option>dreamlike</option><option>tense</option><option>nostalgic</option><option>epic</option>
+    <option>whimsical</option><option>melancholic</option><option>romantic</option><option>serene</option><option>ominous</option>
+    <option>uplifting</option><option>foreboding</option><option>fantastical</option><option>adventurous</option><option>futuristic</option>
+    <option>bleak</option><option>cozy</option><option>macabre</option><option>surreal</option><option>calm</option>
+    <option>sinister</option><option>meditative</option><option>empowering</option><option>tragic</option><option>introspective</option>
+    <option>grandiose</option><option>playful</option><option>suspenseful</option><option>enigmatic</option><option>triumphant</option>
+  </datalist>
+  <datalist id="compositions">
+    <option>centered</option><option>rule of thirds</option><option>wide shot</option><option>silhouette framing</option><option>leading lines</option>
+    <option>diagonal composition</option><option>symmetrical</option><option>asymmetrical</option><option>framed by arch</option><option>foreground interest</option>
+    <option>layered depth</option><option>high horizon</option><option>low horizon</option><option>golden ratio</option><option>radial</option>
+    <option>top-down</option><option>triangular</option><option>negative space</option><option>tight crop</option><option>mirror reflection</option>
+    <option>repetition</option><option>frame within a frame</option><option>busy background</option><option>minimalist</option><option>dynamic angle</option>
+    <option>overlapping shapes</option><option>off-center</option><option>deep focus</option><option>shallow focus</option><option>leading subject</option>
+  </datalist>
+
+  <script>
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+      document.getElementById('section-' + tab).classList.add('active');
+      document.getElementById('output').innerText = '';
+    }
+
+    function getRandomOption(datalistId) {
+      const datalist = document.getElementById(datalistId);
+      if (!datalist) return '';
+      const options = datalist.getElementsByTagName('option');
+      if (options.length === 0) return '';
+      const i = Math.floor(Math.random() * options.length);
+      return options[i].value;
+    }
+
+    function randomizeFields(mode) {
+      if (mode === 'character') {
+        const fieldMap = [
+          ['age','ages'],['gender','genders'],['origin','origins'],['skin','skins'],['face','faces'],
+          ['eyes','eyes'],['hairStyle','hairStyles'],['hairColor','hairColors'],['features','features'],['body','bodies'],
+          ['clothes','clothesList'],['fabric','fabrics'],['accessories','accessoriesList'],['footwear','footwearList'],
+          ['pose','poses'],['facing','facings'],
+          ['envType','envTypes'],['envDetails','envDetailsList'],['light','lights'],['envObjects','envObjectsList'],
+          ['cameraType','cameraTypes'],['lensType','lensTypes'],
+          ['angle','angles'],['dof','dofStyles'],['lightingStyle','lightingStyles'],
+          ['renderStyle','renderStyles'],['engine','engines'],['colorStyle','colorStyles'],
+          ['postfx','postfxList'],['mood','moods'],['composition','compositions']
+        ];
+        fieldMap.forEach(([inputId, datalistId]) => {
+          const input = document.getElementById(inputId);
+          if (input) input.value = getRandomOption(datalistId);
+        });
+        document.getElementById('focal').value = [18,24,35,50,85,135,200][Math.floor(Math.random()*7)];
+        document.getElementById('aperture').value = [1.2,1.4,2,2.8,4,5.6,8,11,16][Math.floor(Math.random()*9)];
+        document.getElementById('iso').value = [100,200,400,800,1600,3200,6400,12800][Math.floor(Math.random()*8)];
+        document.getElementById('shutter').value = [30,60,125,250,500,1000,2000,4000][Math.floor(Math.random()*8)];
+      }
+      if (mode === 'space') {
+        const fieldMap = [
+          ['spaceType','spaceTypes'],['spaceEnv','envTypes'],['spaceDetails','envDetailsList'],['spaceLight','lights'],['spaceObjects','envObjectsList'],
+          ['spaceCamera','cameraTypes'],['spaceLens','lensTypes'],['spaceAngle','angles'],['spaceLighting','lightingStyles'],
+          ['spaceDof','dofStyles'],['spaceRenderStyle','renderStyles'],['spaceEngine','engines'],
+          ['spaceColorStyle','colorStyles'],['spacePostfx','postfxList'],['spaceMood','moods'],['spaceComposition','compositions']
+        ];
+        fieldMap.forEach(([inputId, datalistId]) => {
+          const input = document.getElementById(inputId);
+          if (input) input.value = getRandomOption(datalistId);
+        });
+      }
+      if (mode === 'product') {
+        const fieldMap = [
+          ['productType','productTypes'],['productMaterial','fabrics'],['productColor','colorStyles'],['productFeatures','productFeatures'],
+          ['productStyle','renderStyles'],['productBg','productBackgrounds'],['productLight','lights'],['productAngle','angles'],
+          ['productCamera','cameraTypes'],['productLens','lensTypes'],['productPostfx','postfxList'],
+          ['productMood','moods'],['productComposition','compositions']
+        ];
+        fieldMap.forEach(([inputId, datalistId]) => {
+          const input = document.getElementById(inputId);
+          if (input) input.value = getRandomOption(datalistId);
+        });
+      }
+    }
+
+    function generatePrompt(mode) {
+      let result = '';
+      if (mode === 'character') {
+        const ids = [
+          'age','gender','origin','skin','face','eyes','hairStyle','hairColor','features','body','clothes','fabric','accessories','footwear','pose','facing',
+          'envType','envDetails','light','envObjects',
+          'cameraType','lensType','focal','aperture','iso','shutter','angle','dof','lightingStyle',
+          'renderStyle','engine','colorStyle','postfx','mood','composition'
+        ].map(id => document.getElementById(id).value);
+        result = `A ${ids[0]} ${ids[1]} from ${ids[2]}, with ${ids[3]} skin, ${ids[4]} face, ${ids[5]} eyes, ${ids[6]} hair in ${ids[7]}, ${ids[8]}, and a ${ids[9]} body. Wearing ${ids[10]}, ${ids[11]}, ${ids[12]}, ${ids[13]}, in a ${ids[14]} pose facing ${ids[15]}.
+In a ${ids[16]} with ${ids[17]}, under ${ids[18]}, surrounded by ${ids[19]}.
+Shot with a ${ids[20]} and ${ids[21]} (${ids[22]}mm, f/${ids[23]}, ISO ${ids[24]}, 1/${ids[25]}s), from a ${ids[26]}, with ${ids[27]}, using ${ids[28]}.
+Rendered in ${ids[29]} using ${ids[30]}, color graded in ${ids[31]}, enhanced with ${ids[32]}.
+Scene evokes a ${ids[33]} mood, framed with ${ids[34]}.`;
+      }
+      if (mode === 'space') {
+        const ids = [
+          'spaceType','spaceEnv','spaceDetails','spaceLight','spaceObjects','spaceCamera','spaceLens','spaceAngle','spaceLighting',
+          'spaceDof','spaceRenderStyle','spaceEngine','spaceColorStyle','spacePostfx','spaceMood','spaceComposition'
+        ].map(id => document.getElementById(id).value);
+        result = `A ${ids[0]} in ${ids[1]}, details: ${ids[2]}, lighting: ${ids[3]}, surrounded by ${ids[4]}.
+Camera: ${ids[5]} with ${ids[6]}, angle: ${ids[7]}, lighting: ${ids[8]}, DOF: ${ids[9]}.
+Rendered in ${ids[10]} using ${ids[11]}.
+Style: ${ids[12]}, FX: ${ids[13]}.
+Mood: ${ids[14]}, Composition: ${ids[15]}.`;
+      }
+      if (mode === 'product') {
+        const ids = [
+          'productType','productMaterial','productColor','productFeatures','productStyle','productBg','productLight','productAngle','productCamera','productLens','productPostfx','productMood','productComposition'
+        ].map(id => document.getElementById(id).value);
+        result = `A ${ids[0]} made of ${ids[1]}, color ${ids[2]}.
+Product features: ${ids[3]}, style: ${ids[4]}.
+Displayed on ${ids[5]}, with ${ids[6]} lighting, angle: ${ids[7]}.
+Camera: ${ids[8]}, lens: ${ids[9]}, FX: ${ids[10]}.
+Mood: ${ids[11]}, Composition: ${ids[12]}.`;
+      }
+      document.getElementById('output').innerText = result;
+    }
+  </script>
+</body>
+</html>
